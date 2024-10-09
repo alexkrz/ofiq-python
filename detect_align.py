@@ -19,7 +19,7 @@ func_dict = {
     "yolo": yolo_detect,
 }
 
-DEBUG = False
+DEBUG = True
 
 
 def align_face(
@@ -74,7 +74,7 @@ def align_face(
             cv2.circle(src_img, tuple(src_landmarks[i].astype(int)), 2, (0, 155, 255), 2)
 
         # Draw standard_landmarks on template_img
-        template_img = np.zeros((112, 112, 3), dtype=np.uint8)
+        template_img = np.zeros((output_size[0], output_size[1], 3), dtype=np.uint8)
         for i in range(len(standard_landmarks)):
             cv2.circle(template_img, tuple(standard_landmarks[i].astype(int)), 2, (0, 155, 255), 2)
 
@@ -95,53 +95,55 @@ def align_face(
 
 
 def main(
-    data_p: Path = Path.home() / "Data" / "EURECOM_Kinect_Face_Dataset",
-    out_p: Path = Path.home() / "Data" / "EURECOM_Kinect_Face_Dataset_aligned",
-    out_ext: str = ".png",
+    img_p: str = "data/c-07-twofaces.png",
+    out_p: str = "data/c-07-twofaces_aligned.png",
+    output_size: tuple = (256, 256),
     method_name: str = "yolo",
     write_images: bool = True,
 ):
-    assert data_p.exists()
-    if not out_p.exists():
-        out_p.mkdir()
-    assert out_ext in [".png", ".jpg"]
+    # assert out_ext in [".png", ".jpg"]
     assert method_name in func_dict.keys()
 
-    img_paths = sorted(list(data_p.glob("*/*/RGB/*.bmp")))
+    # img_paths = sorted(list(data_p.glob("*/*/RGB/*.bmp")))
     error_list = []
     error_count = 0
-    for i in tqdm(range(len(img_paths))):
-        img_p = img_paths[i]
-        img_in = cv2.imread(str(img_p))
+    # for i in tqdm(range(len(img_paths))):
+    # img_p = img_paths[i]
+    img_in = cv2.imread(img_p)
 
-        bboxes, keypoints_all = func_dict[method_name](img_in)
-        n_detections = len(bboxes)
-        img_out = draw_bboxes_and_keypoints(img_in, bboxes, keypoints_all)
-        # cv2.imshow("Face Detection", img_out)
+    bboxes, keypoints_all = func_dict[method_name](img_in)
+    n_detections = len(bboxes)
+    img_out = draw_bboxes_and_keypoints(img_in, bboxes, keypoints_all)
+    # cv2.imshow("Face Detection", img_out)
+    # cv2.waitKey(0)
+
+    if n_detections >= 1:
+        # Use biggest bbox
+        max_area = 0
+        max_idx = 0
+        for idx in range(len(bboxes)):
+            bbox = bboxes[idx]
+            width = bbox[2]
+            height = bbox[3]
+            area = width * height
+            if area > max_area:
+                max_area = area
+                max_idx = idx
+
+        # Perform face alignment to 112x112 pixel and store aligned images
+        keypoints = keypoints_all[max_idx]
+        landmarks = np.array(list(keypoints.values()), dtype=np.float32)
+        aligned_img = align_face(img_in, landmarks, output_size=output_size)
+        if write_images:
+            if not cv2.imwrite(out_p, aligned_img):
+                raise RuntimeError("Could not write image")
+        # cv2.imshow("Aligned Image", aligned_img)
         # cv2.waitKey(0)
-
-        if n_detections == 1:
-            # Perform face alignment to 112x112 pixel and store aligned images
-            assert len(keypoints_all) == 1
-            keypoints = keypoints_all[0]
-            landmarks = np.array(list(keypoints.values()), dtype=np.float32)
-            aligned_img = align_face(img_in, landmarks)
-            if write_images:
-                img_outp = out_p / str(img_p.parent.relative_to(data_p)) / (img_p.stem + out_ext)
-                if not img_outp.parent.exists():
-                    img_outp.parent.mkdir(parents=True)
-                if not cv2.imwrite(str(img_outp), aligned_img):
-                    raise RuntimeError("Could not write image")
-            # cv2.imshow("Aligned Image", aligned_img)
-            # cv2.waitKey(0)
-        else:
-            error_list.append(str(img_p.relative_to(data_p.parent)))
-            error_count += 1
+    else:
+        error_list.append(out_p)
+        error_count += 1
 
     print(f"Detection failed for {error_count} images.")
-    with open(f"{str(out_p)}/logfile_{method_name}.txt", "w") as f:
-        for img_p in error_list:
-            f.write(img_p + "\n")
 
 
 if __name__ == "__main__":

@@ -247,5 +247,6 @@ def yolo_detect(
     # img_out = YOLOv8_face_detector.draw_detections(img, boxes, scores, kpts)
 
     bboxes, keypoints_all = adjust_boxes_and_kpts(boxes, kpts)
+    # bbox has structure x, y, width, height
 
     return bboxes, keypoints_all

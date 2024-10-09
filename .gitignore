@@ -4,8 +4,11 @@ __pycache__/
 # VSCode
 /.vscode/
 
-# Logs
-/logs/
+# Data
+/data/
 
 # Checkpoints
 /checkpoints/
+
+# Logs
+/logs/
