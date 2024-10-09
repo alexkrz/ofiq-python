@@ -1,2 +1,1 @@
-# ofiq-python
-OFIQ-Python
+# OFIQ-Python

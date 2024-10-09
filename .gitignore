@@ -1,0 +1,11 @@
+# System
+__pycache__/
+
+# VSCode
+/.vscode/
+
+# Logs
+/logs/
+
+# Checkpoints
+/checkpoints/
