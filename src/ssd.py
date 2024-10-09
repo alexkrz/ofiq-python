@@ -1,6 +1,3 @@
-from copy import deepcopy
-from typing import Tuple
-
 import cv2
 import numpy as np
 
@@ -11,9 +8,20 @@ def ssd_detect(
     model_p: str = "checkpoints/ssd/ssd_facedetect.caffemodel",
     prototxt_p: str = "checkpoints/ssd/ssd_facedetect.prototxt.txt",
     conf_th: float = 0.5,
-) -> Tuple[np.ndarray, int]:
+) -> list:
+    """Detect faces with SSD network
 
-    img = deepcopy(img)
+    Args:
+        img (np.ndarray): Input image in OpenCV BGR format.
+        model_p (str, optional): The path to the caffemodel.
+        prototxt_p (str, optional): The path to the prototxt.txt file.
+        conf_th (float, optional): The confidence threshold.
+
+    Returns:
+        List: List of bounding boxes
+    """
+
+    # img = deepcopy(img)
 
     # Load serialized model from disk
     print("Loading model..")
@@ -36,6 +44,7 @@ def ssd_detect(
 
     # loop over the detections
     n_detections = 0
+    bboxes = []
     for i in range(0, detections.shape[2]):
         # extract the confidence (i.e., probability) associated with the
         # prediction
@@ -49,12 +58,15 @@ def ssd_detect(
             box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
             (startX, startY, endX, endY) = box.astype("int")
 
+            box = np.array([startX, startY, endX - startX, endY - startY])
+            bboxes.append(box)
+
             # draw the bounding box of the face along with the associated
             # probability
-            text = f"{confidence * 100:.2f}%"
-            y = startY - 10 if startY - 10 > 10 else startY + 10
-            cv2.rectangle(img, (startX, startY), (endX, endY), (0, 0, 255), 2)
-            cv2.putText(img, text, (startX, y), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
+            # text = f"{confidence * 100:.2f}%"
+            # y = startY - 10 if startY - 10 > 10 else startY + 10
+            # cv2.rectangle(img, (startX, startY), (endX, endY), (0, 0, 255), 2)
+            # cv2.putText(img, text, (startX, y), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
             n_detections += 1
 
-    return img, n_detections
+    return bboxes
