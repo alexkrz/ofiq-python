@@ -5,7 +5,7 @@ import numpy as np
 
 
 def draw_bboxes_and_keypoints(
-    img: np.ndarray, bboxes: list, keypoints_all: list | None
+    img: np.ndarray, bboxes: list, keypoints_all: list | None = None
 ) -> np.ndarray:
     img = deepcopy(img)
     for i in range(len(bboxes)):
