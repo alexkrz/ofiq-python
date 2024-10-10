@@ -12,9 +12,7 @@ func_dict = {
 }
 
 
-def crop_and_resize(
-    img: np.ndarray, bbox: np.ndarray, output_size: tuple = (256, 256)
-) -> np.ndarray:
+def crop_and_resize(img: np.ndarray, bbox: np.ndarray, output_size: tuple) -> np.ndarray:
 
     x, y, width, height = bbox.tolist()
 
@@ -55,7 +53,7 @@ def crop_and_resize(
 def main(
     img_p: str = "data/c-07-twofaces.png",
     out_p: str = "data/c-07-twofaces_cropped.png",
-    output_size: tuple = (256, 256),
+    output_size: tuple = (616, 616),
     method_name: str = "ssd",
     write_images: bool = True,
 ):
