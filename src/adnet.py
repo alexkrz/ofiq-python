@@ -3,7 +3,8 @@ import numpy as np
 import onnxruntime as ort
 
 
-def draw_landmarks(img: np.ndarray, landmarks: np.ndarray):
+def draw_landmarks(img_p: str, landmarks: np.ndarray):
+    img = cv2.imread(img_p)
     for idx in range(len(landmarks)):
         x, y = landmarks[idx]
         cv2.circle(img, (x, y), 1, (255, 0, 0), cv2.FILLED)
@@ -12,10 +13,10 @@ def draw_landmarks(img: np.ndarray, landmarks: np.ndarray):
     cv2.waitKey(0)
 
 
-def main(
-    img_p: str = "data/c-07-twofaces_cropped.png",
-    model_p: str = "checkpoints/adnet/adnet_ofiq.onnx",
-):
+def compute_landmarks(
+    img_p: str,
+    model_p: str,
+) -> np.ndarray:
     # Load model
     # model = cv2.dnn.readNetFromONNX(model_p)  # Cannot read ADNet model with OpenCV
     ort_sess = ort.InferenceSession(model_p)
@@ -36,12 +37,15 @@ def main(
     outputs = ort_sess.run(["output"], {"input": blob})
     landmarks: np.ndarray = outputs[0]
     landmarks = landmarks.squeeze()  # Squeeze out batch dimension
-    print(landmarks.shape)
+    # print(landmarks.shape)
     # De-normalize landmarks
     landmarks = 127.5 * (landmarks + 1)
     landmarks = landmarks.astype("int")
-    draw_landmarks(img, landmarks)
+    return landmarks
 
 
 if __name__ == "__main__":
-    main()
+    img_p = "data/c-07-twofaces_cropped.png"
+    model_p = "checkpoints/adnet/adnet_ofiq.onnx"
+    landmarks = compute_landmarks(img_p, model_p)
+    draw_landmarks(img_p, landmarks)
