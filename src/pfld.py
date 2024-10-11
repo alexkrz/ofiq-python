@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import onnxruntime as ort
 
 
 def draw_landmarks(img_p: str, landmarks: np.ndarray):
@@ -18,9 +17,9 @@ def compute_landmarks(
     model_p: str,
 ) -> np.ndarray:
     # Load model
-    # model = cv2.dnn.readNetFromONNX(model_p)  # Cannot read ADNet model with OpenCV
-    ort_sess = ort.InferenceSession(model_p)
-    input_size = (256, 256)
+    model = cv2.dnn.readNetFromONNX(model_p)
+    input_size = (112, 112)
+    output_layer_names = model.getUnconnectedOutLayersNames()
 
     # Set up data
     img = cv2.imread(img_p)
@@ -35,12 +34,14 @@ def compute_landmarks(
     )
 
     # Run forward pass
-    outputs = ort_sess.run(["output"], {"input": blob})
-    landmarks: np.ndarray = outputs[0]
+    model.setInput(blob)
+    outputs = model.forward(output_layer_names)
+    landmarks: np.ndarray = outputs[1]
     landmarks = landmarks.squeeze()  # Squeeze out batch dimension
+    landmarks = landmarks.reshape(-1, 2)  # Convert landmarks to 2D array
     # print(landmarks.shape)
     # De-normalize landmarks
-    landmarks = 127.5 * (landmarks + 1)
+    landmarks = 127.5 * (landmarks)
     # Transform x-coordinates
     landmarks[:, 0] = landmarks[:, 0] * (W / input_size[0])
     # Transform y-coordinates
@@ -51,6 +52,6 @@ def compute_landmarks(
 
 if __name__ == "__main__":
     img_p = "data/c-07-twofaces_cropped.png"
-    model_p = "checkpoints/adnet/adnet_ofiq.onnx"
+    model_p = "checkpoints/pfld/pfld.onnx"
     landmarks = compute_landmarks(img_p, model_p)
     draw_landmarks(img_p, landmarks)
