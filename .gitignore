@@ -1,5 +1,6 @@
 # System
 __pycache__/
+*.ipynb_checkpoints/
 
 # VSCode
 /.vscode/
