@@ -41,11 +41,11 @@ def compute_landmarks(
     landmarks = landmarks.reshape(-1, 2)  # Convert landmarks to 2D array
     # print(landmarks.shape)
     # De-normalize landmarks
-    landmarks = 127.5 * (landmarks)
+    # landmarks = 127.5 * (landmarks)
     # Transform x-coordinates
-    landmarks[:, 0] = landmarks[:, 0] * (W / input_size[0])
+    landmarks[:, 0] = landmarks[:, 0] * W
     # Transform y-coordinates
-    landmarks[:, 1] = landmarks[:, 1] * (H / input_size[1])
+    landmarks[:, 1] = landmarks[:, 1] * H
     landmarks = landmarks.astype("int")
     return landmarks
 
