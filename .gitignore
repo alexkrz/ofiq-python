@@ -13,3 +13,6 @@ __pycache__/
 
 # Logs
 /logs/
+
+# Results
+/output/
