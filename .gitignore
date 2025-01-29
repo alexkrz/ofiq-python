@@ -7,10 +7,12 @@ __pycache__/
 /.vscode/
 
 # Data
-/data/
+/data/*
+!/data/ColorFERET-00472_940519_hr_small_cropped.png
 
 # Checkpoints
-/checkpoints/
+/checkpoints/*/*
+!/checkpoints/adnet/adnet_ofiq.onnx
 
 # Logs
 /logs/
