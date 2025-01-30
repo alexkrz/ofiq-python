@@ -8,11 +8,11 @@ __pycache__/
 
 # Data
 /data/*
-!/data/ColorFERET-00472_940519_hr_small_cropped.png
 
 # Checkpoints
 /checkpoints/*/*
 !/checkpoints/adnet/adnet_ofiq.onnx
+!/checkpoints/adnet/LICENSE.md
 
 # Logs
 /logs/
