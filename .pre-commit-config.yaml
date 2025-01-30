@@ -21,13 +21,14 @@ repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.8.3
     hooks:
-      - id: ruff  # This is the linter
+      - id: ruff # This is the linter
         args:
           - --fix
-          - --ignore=F401  # Allow unused imports
-      - id: ruff-format  # This is the formatter
+          - --ignore=F401 # Ignore unused imports
+          - --ignore=F841 # Ignore unused variables
+      - id: ruff-format # This is the formatter
         args:
-         - --line-length=99
+          - --line-length=99
 
   # Jupyter notebook cell output clearing
   - repo: https://github.com/kynan/nbstripout

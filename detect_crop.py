@@ -13,7 +13,6 @@ func_dict = {
 
 
 def crop_and_resize(img: np.ndarray, bbox: np.ndarray, output_size: tuple) -> np.ndarray:
-
     x, y, width, height = bbox.tolist()
 
     # Extend bounding box to square
@@ -51,8 +50,8 @@ def crop_and_resize(img: np.ndarray, bbox: np.ndarray, output_size: tuple) -> np
 
 
 def main(
-    img_p: str = "data/ColorFERET-00472_940519_hr_small.png",
-    out_p: str = "data/ColorFERET-00472_940519_hr_small_cropped.png",
+    img_p: str = "data/009_03.jpg",
+    out_p: str = "data/009_03_cropped.png",
     output_size: tuple = (616, 616),
     method_name: str = "ssd",
     write_images: bool = True,

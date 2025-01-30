@@ -8,11 +8,14 @@ __pycache__/
 
 # Data
 /data/*
+!/data/README.md
+!/data/009_03.jpg
+!/data/009_03_cropped.png
 
 # Checkpoints
 /checkpoints/*/*
-!/checkpoints/adnet/adnet_ofiq.onnx
 !/checkpoints/adnet/LICENSE.md
+!/checkpoints/adnet/adnet_ofiq.onnx
 
 # Logs
 /logs/

@@ -1,0 +1,3 @@
+Sample image `009_03.jpg` was obtained from the `neutral_front/` folder from:
+
+DeBruine, Lisa; Jones, Benedict (2017). Face Research Lab London Set. figshare. Dataset. <https://doi.org/10.6084/m9.figshare.5047666.v5>
