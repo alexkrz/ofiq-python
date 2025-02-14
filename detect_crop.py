@@ -5,48 +5,11 @@ from jsonargparse import CLI
 from tqdm import tqdm
 
 from src.ssd import ssd_detect
-from src.utils import draw_bboxes_and_keypoints
+from src.utils import crop_and_resize, draw_bboxes_and_keypoints
 
 func_dict = {
     "ssd": ssd_detect,
 }
-
-
-def crop_and_resize(img: np.ndarray, bbox: np.ndarray, output_size: tuple) -> np.ndarray:
-    x, y, width, height = bbox.tolist()
-
-    # Extend bounding box to square
-    if width < height:
-        diff = height - width
-        width = height
-        x = (int)(x - diff / 2)
-    elif height < width:
-        diff = width - height
-        height = width
-        y = (int)(y - diff / 2)
-
-    # bbox = np.array([x, y, width, height]).astype("int")
-    # print("bbox_square:", bbox)
-    # img_out = draw_bboxes_and_keypoints(img, [bbox], keypoints_all=None)
-    # cv2.imshow("Face Detection", img_out)
-    # cv2.waitKey(0)
-
-    # Add padding
-    # NOTE: We perform padding here different to the ISO standard
-    padding = (int)(0.1 * width)
-    width = width + padding
-    height = height + padding
-    x = (int)(x - padding / 2)
-    y = (int)(y - padding / 2)
-
-    # Crop image
-    img = img[y : y + height, x : x + width]
-    # cv2.imshow("Cropped img", img)
-    # cv2.waitKey(0)
-
-    # Resize to output_size
-    img_out = cv2.resize(img, dsize=output_size)
-    return img_out
 
 
 def main(

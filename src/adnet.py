@@ -3,8 +3,7 @@ import numpy as np
 import onnxruntime as ort
 
 
-def draw_landmarks(img_p: str, landmarks: np.ndarray):
-    img = cv2.imread(img_p)
+def draw_landmarks(img: np.ndarray, landmarks: np.ndarray):
     for idx in range(len(landmarks)):
         x, y = landmarks[idx]
         cv2.circle(img, (x, y), 3, (255, 0, 0), cv2.FILLED)
@@ -14,7 +13,7 @@ def draw_landmarks(img_p: str, landmarks: np.ndarray):
 
 
 def compute_landmarks(
-    img_p: str,
+    img: np.ndarray,
     model_p: str,
 ) -> np.ndarray:
     # Load model
@@ -23,7 +22,6 @@ def compute_landmarks(
     input_size = (256, 256)
 
     # Set up data
-    img = cv2.imread(img_p)
     W, H, C = img.shape
     blob = cv2.dnn.blobFromImage(
         img,
@@ -47,10 +45,3 @@ def compute_landmarks(
     landmarks[:, 1] = landmarks[:, 1] * (H / input_size[1])
     landmarks = landmarks.astype("int")
     return landmarks
-
-
-if __name__ == "__main__":
-    img_p = "data/c-07-twofaces_cropped.png"
-    model_p = "checkpoints/adnet/adnet_ofiq.onnx"
-    landmarks = compute_landmarks(img_p, model_p)
-    draw_landmarks(img_p, landmarks)

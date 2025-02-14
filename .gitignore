@@ -14,8 +14,8 @@ __pycache__/
 
 # Checkpoints
 /checkpoints/*/*
-!/checkpoints/adnet/LICENSE.md
-!/checkpoints/adnet/adnet_ofiq.onnx
+!/checkpoints/adnet/*
+!/checkpoints/ssd/*
 
 # Logs
 /logs/
